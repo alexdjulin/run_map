@@ -1,7 +1,9 @@
 # Run Map
-A map of all places where I took part in running events (10k, half, marathons, ultras and misc distances)
+#### A map of all places where I took part in running events (10k, half, marathons, ultras and misc distances)
 
-![https://media.nathanael3d.com/dev/run_map/run_map.html](https://user-images.githubusercontent.com/53292656/112905178-4e93fb00-90ea-11eb-82aa-ad67d6bfefe0.jpg)
+<p align="center">
+  <a href="https://media.nathanael3d.com/dev/run_map/run_map.html"><img src="readme_preview.jpg" width="600" title="See full map"></a>
+</p>
 
 The map is using the Folium python library. The base layer relies on OpenStreetMap.
 https://python-visualization.github.io/folium/
