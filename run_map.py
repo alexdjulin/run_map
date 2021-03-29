@@ -1,6 +1,10 @@
 import folium
-import pandas
-import webbrowser
+from pandas import read_csv as panda_read_csv  # read csv
+from webbrowser import open as wb_open
+
+# popup size
+POPUP_WIDTH = 550
+POPUP_HEIGHT = 320
 
 # define paths to external files
 run_map_html = "run_map.html"
@@ -9,12 +13,11 @@ events_cst = "events.csv"
 
 # define race colors based on distance and store them in a dictionnary
 race_color_dict = {
-'5.0': "beige",
 '10.0': "blue",
 '21.1': "green",
 '42.2': "red",
 'ultra': "black",
-'misc': "lightgray"
+'misc': "purple"
 }
 
 # load html popup contents
@@ -22,7 +25,7 @@ with open(popup_contents_html) as f:
     html_popup = f.read()
 
 # get data from csv file
-data = pandas.read_csv(events_cst)
+data = panda_read_csv(events_cst)
 date_list = list(data["Date"])
 race_list = list(data["Race"])
 loc_list = list(data["Location"])
@@ -42,7 +45,11 @@ start_lon = (min(lon_list)+max(lon_list))/2
 run_map = folium.Map(location=[start_lat, start_lon], tiles="openstreetmap", zoom_start=6)
 
 # create feature group
-fg = folium.FeatureGroup(name="My Map")
+fg_misc = folium.FeatureGroup(name="Misc")
+fg_10k = folium.FeatureGroup(name="10 km")
+fg_half = folium.FeatureGroup(name="Half-Marathons")
+fg_marathon = folium.FeatureGroup(name="Marathons")
+fg_ultra = folium.FeatureGroup(name="Ultras")
 
 # add markers based on csv file data
 for date, race, loc, lt, ln, typ, dist, time, notes, link, post, pic in zip(date_list, race_list, loc_list, lat_list, lon_list, type_list, dist_list, time_list, notes_list, link_list, post_list, pic_list):
@@ -64,17 +71,37 @@ for date, race, loc, lt, ln, typ, dist, time, notes, link, post, pic in zip(date
     else:
         html_contents = html_popup
 
-    iframe = folium.IFrame(html=html_contents.format(race=race, date=date, loc=loc, typ=typ, dist=str_dist+' km', time=time, notes=notes, link=link, post=post, pic=pic, race_clr=race_color), width=500, height=350)
+    # create the iFrame popup
+    iframe = folium.IFrame(html=html_contents.format(race=race, date=date, loc=loc, typ=typ, dist=str_dist+' km', time=time, notes=notes, link=link, post=post, pic=pic, race_clr=race_color), width=POPUP_WIDTH, height=POPUP_HEIGHT)
     
-    # add marker to feature group
-    fg.add_child(folium.Marker(location=[lt, ln], tooltip=race, popup=folium.Popup(iframe), icon = folium.Icon(color = race_color)))
+    # add marker to feature groups
+    folium_marker = folium.Marker(location=[lt, ln], tooltip=race, popup=folium.Popup(iframe), icon = folium.Icon(color = race_color))
+    
+    if dist == 10.0:
+        fg_10k.add_child(folium_marker)
+    elif dist == 21.1:
+        fg_half.add_child(folium_marker)
+    elif dist == 42.2:
+        fg_marathon.add_child(folium_marker)
+    elif dist > 42.2:
+        fg_ultra.add_child(folium_marker)
+    else:
+        fg_misc.add_child(folium_marker)
+    
 
-# add feature group to map
-run_map.add_child(fg)
+# add feature groups to map
+run_map.add_child(fg_10k)
+run_map.add_child(fg_half)
+run_map.add_child(fg_marathon)
+run_map.add_child(fg_ultra)
+run_map.add_child(fg_misc)
+
+# add layer control (legend), each feature group will be a different category
+run_map.add_child(folium.LayerControl(position = 'topright', collapsed = False, autoZIndex=True))
 
 # save map
 run_map.save(run_map_html)
 print("###### MAP SAVED #######")
 
 # open html map in browser
-webbrowser.open(run_map_html)
+wb_open(run_map_html)
