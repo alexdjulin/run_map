@@ -6,7 +6,7 @@
   <a href="https://media.nathanael3d.com/dev/run_map/run_map.html" target="_blank"><img src="readme_preview.jpg" width="600" title="See full map"></a>
 </p>
 
-*Click to display full map*
+*Click picture to display full map*
 
 The map is using the **Folium** python library. The base layer relies on **OpenStreetMap**.
 https://python-visualization.github.io/folium/
