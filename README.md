@@ -8,8 +8,10 @@
 
 *Click picture to display full map*
 
-The map is using the **Folium** python library. The base layer relies on **OpenStreetMap**.
+The map is using the **Folium** python library.
 https://python-visualization.github.io/folium/
+
+The base layer relies on **OpenStreetMap**.
 https://www.openstreetmap.org/
 
 All run events are loaded from a **CSV** file using read_csv() from the **Pandas** library. The CSV file contains all the pop-up informations, as well as event geographical coordinates (longitude, lattitude) used to place a marker on the map.
